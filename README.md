@@ -13,6 +13,8 @@ cargo run
 
 ## Development Token
 
+Download your service account key and place it in `key.json`.
+
 ```bash
 pip install -r requirements.txt
 echo "GOOGLE_CLOUD_ACCESS_TOKEN=$(python google.py)" >> .env

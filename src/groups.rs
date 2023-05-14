@@ -5,16 +5,11 @@ use axum::{
     Json,
     extract::Path
 };
-use serde::Serialize;
-use crate::models::SearchTransitiveGroupsResponse;
+use crate::models::{
+    Group,
+    SearchTransitiveGroupsResponse
+};
 
-// Define a struct to represent a group
-#[derive(Serialize)]
-pub struct Group {
-    email: String,
-    slug: String,
-    name: String,
-}
 
 pub async fn groups_handler(Path(member_email): Path<String>) -> Json<Vec<Group>> {
     return Json(get_groups(member_email).await.unwrap());
@@ -49,7 +44,6 @@ pub async fn get_groups(member_email: String) -> Result<Vec<Group>, Box<dyn std:
         .send()
         .await;
         
-        // println!("Response: {:?}", response.unwrap().text().await);
         match response {
             Ok(res) => match res.json::<SearchTransitiveGroupsResponse>().await {
                 Ok(data) => {

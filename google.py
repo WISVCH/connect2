@@ -1,7 +1,6 @@
 from google.auth.transport import requests
 from google.oauth2 import service_account
 
-# https://www.googleapis.com/auth/sqlservice.login https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/compute https://www.googleapis.com/auth/appengine.admin https://www.googleapis.com/auth/userinfo.email openid
 CREDENTIAL_SCOPES = ["https://www.googleapis.com/auth/cloud-identity.groups.readonly"]
 
 CREDENTIALS_KEY_PATH = 'key.json'

@@ -8,7 +8,6 @@ mod models;
 
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/groups/:member_email", get(groups_handler))

@@ -1,6 +1,16 @@
 use std::collections::HashMap;
 
-use serde::Deserialize;
+use serde::{
+    Deserialize,
+    Serialize
+};
+
+#[derive(Serialize)]
+pub struct Group {
+    pub email: String,
+    pub slug: String,
+    pub name: String,
+}
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -13,26 +23,16 @@ pub struct GroupRelation {
     labels: HashMap<String, String>,
 }
 
-// EntityKey
 #[derive(Deserialize)]
 pub struct EntityKey {
     pub id: String,
     namespace: Option<String>,
 }
 
-// Currently supported TransitiveMembershipRoles: "MEMBER", "OWNER", and "MANAGER".
-
 #[derive(Deserialize)]
 struct TransitiveMembershipRole {
-    role: String
+    role: String // "MEMBER", "OWNER", and "MANAGER".
 }
-
-/* RelationType (enum)
-* RELATION_TYPE_UNSPECIFIED	The relation type is undefined or undetermined.
-* DIRECT	The two entities have only a direct membership with each other.
-* INDIRECT	The two entities have only an indirect membership with each other.
-* DIRECT_AND_INDIRECT	The two entities have both a direct and an indirect membership with each other.
-*/
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
