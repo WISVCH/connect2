@@ -1,7 +1,4 @@
-use axum::{
-    routing::get,
-    Router,
-};
+use axum::{routing::get, Router};
 use groups::{groups_handler, groups_handler_as_array};
 mod groups;
 mod models;
