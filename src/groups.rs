@@ -1,7 +1,9 @@
 use dotenv::dotenv;
-use std::env;
 
-use crate::models::{Group, SearchTransitiveGroupsResponse};
+use crate::{
+    models::{Group, SearchTransitiveGroupsResponse},
+    token::get_token,
+};
 use axum::{extract::Path, Json};
 
 pub async fn groups_handler(Path(member_email): Path<String>) -> Json<Vec<Group>> {
@@ -21,8 +23,7 @@ pub async fn groups_handler_as_array(Path(member_email): Path<String>) -> Json<V
 */
 pub async fn get_groups(member_email: String) -> Result<Vec<Group>, Box<dyn std::error::Error>> {
     dotenv().ok();
-    let access_token =
-        env::var("GOOGLE_CLOUD_ACCESS_TOKEN").expect("GOOGLE_CLOUD_ACCESS_TOKEN not set");
+    let access_token = get_token().await.unwrap().access_token;
 
     let url = format!(
         "https://cloudidentity.googleapis.com/v1/{}/memberships:searchTransitiveGroups",
