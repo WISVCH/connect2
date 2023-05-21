@@ -14,11 +14,7 @@ pub async fn get_token() -> Result<google_cloud_auth::token::Token, Box<dyn std:
     let mut ts = create_token_source(config).await?;
     ts.set_subject(sub).await;
 
-    println!("ts: {:?}", ts);
-    // ts.sub = Some(sub.to_string());
     let token = ts.token().await?;
-
-    // println!("token: {:?}", token);
 
     Ok(token)
 }
