@@ -7,7 +7,7 @@ use crate::{
 use axum::{extract::Path, Json};
 
 pub async fn groups_handler(Path(member_email): Path<String>) -> Json<Vec<Group>> {
-    return Json(get_groups(member_email).await.unwrap());
+    Json(get_groups(member_email).await.unwrap())
 }
 pub async fn groups_handler_as_array(Path(member_email): Path<String>) -> Json<Vec<String>> {
     let groups = get_groups(member_email).await.unwrap();
@@ -15,7 +15,7 @@ pub async fn groups_handler_as_array(Path(member_email): Path<String>) -> Json<V
     for group in groups {
         slugs.push(group.slug);
     }
-    return Json(slugs);
+    Json(slugs)
 }
 
 /* Retrieve the Groups from google workspace.
@@ -62,10 +62,10 @@ fn get_slug_from_email(email: String) -> String {
      * 2. Replace "-group@ch.tudelft.nl" with ""
      * 3. Replace "@ch.tudelft.nl" with ""
      */
-    return email
+    email
         .replace("-commissie@ch.tudelft.nl", "")
         .replace("-group@ch.tudelft.nl", "")
-        .replace("@ch.tudelft.nl", "");
+        .replace("@ch.tudelft.nl", "")
 }
 fn map_groups_response_to_groups(response: SearchTransitiveGroupsResponse) -> Vec<Group> {
     let mut groups: Vec<Group> = vec![];
