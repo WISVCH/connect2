@@ -10,7 +10,7 @@ pub async fn get_token() -> Result<google_cloud_auth::token::Token, Box<dyn std:
         // scopes is required only for service account Oauth2
         // https://developers.google.com/identity/protocols/oauth2/service-account
         scopes: Some(&scopes),
-        sub: Some(&sub),
+        sub: Some(sub),
     };
     let ts = create_token_source(config).await?;
 
