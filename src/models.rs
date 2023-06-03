@@ -37,3 +37,13 @@ pub struct SearchTransitiveGroupsResponse {
     pub memberships: Vec<GroupRelation>,
     // next_page_token: Option<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    exp: usize,
+    iat: usize,
+    iss: String,
+    aud: String,
+    // hd: String,
+    // google: Google,
+}
