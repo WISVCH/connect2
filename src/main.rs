@@ -1,10 +1,17 @@
 use axum::{routing::get, Router};
 use groups::{groups_handler, groups_handler_as_array};
 mod groups;
+mod token;
+
 mod models;
+
+extern crate dotenv;
+use dotenv::dotenv;
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
+
     let app = Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .route("/groups/:member_email", get(groups_handler))

@@ -19,3 +19,10 @@ Download your service account key and place it in `key.json`.
 pip install -r requirements.txt
 echo "GOOGLE_CLOUD_ACCESS_TOKEN=$(python google.py)" >> .env
 ```
+
+Formatting and code analysis:
+
+```bash
+cargo fmt
+cargo clippy
+```
