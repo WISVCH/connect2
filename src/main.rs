@@ -19,7 +19,7 @@ async fn main() {
         .route("/groups/:member_email", get(groups_handler))
         .route("/groups/:member_email/slugs", get(groups_handler_as_array));
 
-    let port = std::env::var("PORT").unwrap_or(String::from("8080"));
+    let port = std::env::var("PORT").unwrap_or(String::from("3000"));
     println!("Listening on port {}", port);
 
     // convert the port to a socket address
