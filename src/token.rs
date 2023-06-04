@@ -16,7 +16,5 @@ pub async fn get_token() -> Result<google_cloud_auth::token::Token, Box<dyn std:
 
     let token = ts.token().await?;
 
-    println!("Token: {:?}", token);
-
     Ok(token)
 }
