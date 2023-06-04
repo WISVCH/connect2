@@ -1,5 +1,5 @@
 use crate::key_provider::{GoogleKeyProviderError, GooglePublicKeyProvider};
-use jsonwebtoken::{Validation, Algorithm};
+use jsonwebtoken::{Algorithm, Validation};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
 
@@ -30,7 +30,7 @@ impl Parser {
     pub const GOOGLE_CERT_URL: &'static str = "https://www.gstatic.com/iap/verify/public_key-jwk";
 
     pub fn new() -> Self {
-        Parser::new_with_custom_url( Parser::GOOGLE_CERT_URL)
+        Parser::new_with_custom_url(Parser::GOOGLE_CERT_URL)
     }
 
     pub fn new_with_custom_url(public_key_url: &str) -> Self {

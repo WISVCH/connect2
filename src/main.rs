@@ -1,14 +1,14 @@
 use std::{net::SocketAddr, str::FromStr};
 
-use axum::{routing::get, Router, middleware};
+use axum::{middleware, routing::get, Router};
 use groups::{groups_handle, groups_handler_as_array, user_handle};
 use iap_verification::iap_verify;
 
 mod groups;
-mod token;
+mod iap_verification;
 mod jwt;
 mod key_provider;
-mod iap_verification;
+mod token;
 
 mod models;
 

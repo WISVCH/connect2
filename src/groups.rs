@@ -1,15 +1,18 @@
 use dotenv::dotenv;
 
 use crate::{
+    iap_verification::IapContext,
     models::{Group, SearchTransitiveGroupsResponse},
-    token::get_token, iap_verification::IapContext,
+    token::get_token,
 };
-use axum::{Json, Extension};
+use axum::{Extension, Json};
 
 pub async fn groups_handle(Extension(iap_context): Extension<IapContext>) -> Json<Vec<Group>> {
     Json(get_groups(iap_context.email).await.unwrap())
 }
-pub async fn groups_handler_as_array(Extension(iap_context): Extension<IapContext>) -> Json<Vec<String>> {
+pub async fn groups_handler_as_array(
+    Extension(iap_context): Extension<IapContext>,
+) -> Json<Vec<String>> {
     let groups = get_groups(iap_context.email).await.unwrap();
     let mut slugs = vec![];
     for group in groups {

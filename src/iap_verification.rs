@@ -1,12 +1,13 @@
+use crate::{jwt::Parser, models::TokenClaims};
 use axum::{
     http::{Request, StatusCode},
-    response::{Response},
-    middleware::{Next}
+    middleware::Next,
+    response::Response,
 };
-use crate::{jwt::Parser, models::TokenClaims};
 
 pub async fn iap_verify<B>(mut req: Request<B>, next: Next<B>) -> Result<Response, StatusCode> {
-    let iap_header = req.headers()
+    let iap_header = req
+        .headers()
         .get("X-Goog-IAP-JWT-Assertion")
         .and_then(|header| header.to_str().ok());
 
@@ -28,7 +29,7 @@ pub async fn iap_verify<B>(mut req: Request<B>, next: Next<B>) -> Result<Respons
 #[derive(Clone)]
 pub struct IapContext {
     pub email: String,
-    pub verified: bool
+    pub verified: bool,
 }
 
 async fn validate_iap_header(header: &str) -> Option<IapContext> {
@@ -37,7 +38,10 @@ async fn validate_iap_header(header: &str) -> Option<IapContext> {
 
     let parser = Parser::new();
     match parser.parse::<TokenClaims>(&jwt_token).await {
-        Ok(claims) => Some(IapContext {email: claims.email, verified: true}),
-        Err(_) =>  None,
+        Ok(claims) => Some(IapContext {
+            email: claims.email,
+            verified: true,
+        }),
+        Err(_) => None,
     }
 }

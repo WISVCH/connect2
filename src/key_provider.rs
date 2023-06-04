@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::time::Instant;
 
 use headers::Header;
-use jsonwebtoken::DecodingKey;
 use jsonwebtoken::errors::Error;
-use reqwest::header::{CACHE_CONTROL, HeaderMap};
+use jsonwebtoken::DecodingKey;
+use reqwest::header::{HeaderMap, CACHE_CONTROL};
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -17,7 +17,7 @@ pub struct GoogleKeys {
 pub struct GoogleKey {
     kid: String,
     x: String,
-    y: String, 
+    y: String,
 }
 
 #[derive(Error, Debug)]
@@ -86,19 +86,14 @@ impl GooglePublicKeyProvider {
         }
     }
 
-    pub async fn get_key(
-        &mut self,
-        kid: &str,
-    ) -> Result<DecodingKey, GoogleKeyProviderError> {
+    pub async fn get_key(&mut self, kid: &str) -> Result<DecodingKey, GoogleKeyProviderError> {
         if self.expiration_time.is_none() || self.is_expire() {
             self.reload().await?
         }
         match self.keys.get(&kid.to_owned()) {
             None => Result::Err(GoogleKeyProviderError::KeyNotFound),
-            Some(key) => {
-                DecodingKey::from_ec_components(key.x.as_str(), key.y.as_str()).map_err(|e|
-                    GoogleKeyProviderError::CreateKeyError(e))
-            }
+            Some(key) => DecodingKey::from_ec_components(key.x.as_str(), key.y.as_str())
+                .map_err(|e| GoogleKeyProviderError::CreateKeyError(e)),
         }
     }
 }
