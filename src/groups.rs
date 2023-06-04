@@ -41,14 +41,21 @@ pub async fn get_groups(member_email: String) -> Result<Vec<Group>, Box<dyn std:
         .send()
         .await;
 
+    println!("Response: {:?}", response);
+
     match response {
-        Ok(res) => match res.json::<SearchTransitiveGroupsResponse>().await {
-            Ok(data) => Ok(map_groups_response_to_groups(data)),
-            Err(e) => {
-                println!("Error: {:?}", e);
-                Ok(vec![])
+        Ok(res) => {
+            let body = res.text().await.unwrap();
+            println!("Response Body: {}", body);
+
+            match serde_json::from_str::<SearchTransitiveGroupsResponse>(&body) {
+                Ok(data) => Ok(map_groups_response_to_groups(data)),
+                Err(e) => {
+                    println!("Error: {:?}", e);
+                    Ok(vec![])
+                }
             }
-        },
+        }
         Err(e) => {
             println!("Error: {:?}", e);
             Ok(vec![])
