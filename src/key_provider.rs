@@ -51,7 +51,7 @@ impl GooglePublicKeyProvider {
     pub async fn reload(&mut self) -> Result<(), GoogleKeyProviderError> {
         match reqwest::get(&self.url).await {
             Ok(r) => {
-                let expiration_time = GooglePublicKeyProvider::parse_expiration_time(&r.headers());
+                let expiration_time = GooglePublicKeyProvider::parse_expiration_time(r.headers());
                 match r.json::<GoogleKeys>().await {
                     Ok(google_keys) => {
                         self.keys.clear();
@@ -70,10 +70,7 @@ impl GooglePublicKeyProvider {
 
     fn parse_expiration_time(header_map: &HeaderMap) -> Option<Instant> {
         match headers::CacheControl::decode(&mut header_map.get_all(CACHE_CONTROL).iter()) {
-            Ok(header) => match header.max_age() {
-                None => None,
-                Some(max_age) => Some(Instant::now() + max_age),
-            },
+            Ok(header) => header.max_age().map(|max_age| Instant::now() + max_age),
             Err(_) => None,
         }
     }
@@ -93,7 +90,7 @@ impl GooglePublicKeyProvider {
         match self.keys.get(&kid.to_owned()) {
             None => Result::Err(GoogleKeyProviderError::KeyNotFound),
             Some(key) => DecodingKey::from_ec_components(key.x.as_str(), key.y.as_str())
-                .map_err(|e| GoogleKeyProviderError::CreateKeyError(e)),
+                .map_err(GoogleKeyProviderError::CreateKeyError),
         }
     }
 }
