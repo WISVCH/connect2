@@ -47,3 +47,11 @@ pub struct Claims {
     // hd: String,
     // google: Google,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenClaims {
+    pub email: String,
+    pub aud: String,
+    pub iss: String,
+    pub exp: u64,
+}

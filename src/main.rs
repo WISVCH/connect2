@@ -2,13 +2,17 @@ use std::{net::SocketAddr, str::FromStr};
 
 use axum::{routing::get, Router};
 use groups::{groups_handler, groups_handler_as_array};
+use jwt::validate_jwt;
 mod groups;
 mod token;
+mod jwt;
+mod key_provider;
 
 mod models;
 
 extern crate dotenv;
 use dotenv::dotenv;
+
 
 #[tokio::main]
 async fn main() {
@@ -17,7 +21,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "OK" }))
         .route("/groups/:member_email", get(groups_handler))
-        .route("/groups/:member_email/slugs", get(groups_handler_as_array));
+        .route("/groups/:member_email/slugs", get(groups_handler_as_array))
+        .route("/validate/jwt", get(validate_jwt));
 
     let port = std::env::var("PORT").unwrap_or(String::from("3000"));
     println!("Listening on port {}", port);
