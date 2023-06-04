@@ -2,20 +2,24 @@ use dotenv::dotenv;
 
 use crate::{
     models::{Group, SearchTransitiveGroupsResponse},
-    token::get_token,
+    token::get_token, iap_verification::IapContext,
 };
-use axum::{extract::Path, Json};
+use axum::{Json, Extension};
 
-pub async fn groups_handler(Path(member_email): Path<String>) -> Json<Vec<Group>> {
-    Json(get_groups(member_email).await.unwrap())
+pub async fn groups_handle(Extension(iap_context): Extension<IapContext>) -> Json<Vec<Group>> {
+    Json(get_groups(iap_context.email).await.unwrap())
 }
-pub async fn groups_handler_as_array(Path(member_email): Path<String>) -> Json<Vec<String>> {
-    let groups = get_groups(member_email).await.unwrap();
+pub async fn groups_handler_as_array(Extension(iap_context): Extension<IapContext>) -> Json<Vec<String>> {
+    let groups = get_groups(iap_context.email).await.unwrap();
     let mut slugs = vec![];
     for group in groups {
         slugs.push(group.slug);
     }
     Json(slugs)
+}
+
+pub async fn user_handle(Extension(iap_context): Extension<IapContext>) -> Json<String> {
+    Json(iap_context.email)
 }
 
 /* Retrieve the Groups from google workspace.

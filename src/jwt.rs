@@ -1,10 +1,4 @@
-use crate::{
-    models::TokenClaims,
-    key_provider::{GoogleKeyProviderError, GooglePublicKeyProvider},
-};
-use axum::{
-    http::header::{HeaderMap},
-};
+use crate::key_provider::{GoogleKeyProviderError, GooglePublicKeyProvider};
 use jsonwebtoken::{Validation, Algorithm};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
@@ -76,29 +70,4 @@ impl Parser {
             Err(_) => Result::Err(ParserError::WrongHeader),
         }
     }
-}
-
-pub async fn validate_jwt(headers: HeaderMap) -> String {
-
-    // Extract the IAP proxy header from the request headers
-    let iap_header = match headers.get("X-Goog-IAP-JWT-Assertion") {
-        Some(header_value) =>  match header_value.to_str() {
-            Ok(token) => token.to_owned(),
-            Err(_) => String::from(""),
-        },
-        None => String::from(""),
-    };
-
-
-    // Check if the IAP header exists and is not empty
-    if iap_header.is_empty() {
-        return "Invalid or missing IAP header!".to_string();
-    }
-
-    // Extract the JWT token from the IAP header
-    let jwt_token = iap_header.trim_start_matches("Bearer ").to_string();
-
-    let parser = Parser::new();
-    let claims = parser.parse::<TokenClaims>(&jwt_token).await.unwrap();
-    return claims.email;
 }
