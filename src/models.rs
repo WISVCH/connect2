@@ -2,11 +2,23 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Group {
     pub email: String,
     pub slug: String,
     pub name: String,
+}
+
+#[derive(Clone, Serialize)]
+pub struct VerifiedResponseGroups {
+    pub email: String,
+    pub groups: Vec<Group>,
+}
+
+#[derive(Clone, Serialize)]
+pub struct VerifiedResponseGroupsSlug {
+    pub email: String,
+    pub groups: Vec<String>,
 }
 
 #[derive(Deserialize)]

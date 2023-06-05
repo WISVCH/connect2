@@ -34,7 +34,7 @@ pub struct IapContext {
 
 async fn validate_iap_header(header: &str) -> Option<IapContext> {
     // Extract the JWT token from the IAP header
-    let jwt_token = header.trim_start_matches("Bearer ").to_string();
+    let jwt_token = header.trim().to_string();
 
     let parser = Parser::new();
     match parser.parse::<TokenClaims>(&jwt_token).await {
@@ -42,6 +42,9 @@ async fn validate_iap_header(header: &str) -> Option<IapContext> {
             email: claims.email,
             verified: true,
         }),
-        Err(_) => None,
+        Err(err) => {
+            print!("{}", err.to_string());
+            None
+        }
     }
 }
