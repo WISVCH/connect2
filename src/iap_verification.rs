@@ -42,9 +42,6 @@ async fn validate_iap_header(header: &str) -> Option<IapContext> {
             email: claims.email,
             verified: true,
         }),
-        Err(err) => {
-            print!("{}", err.to_string());
-            None
-        }
+        Err(_err) => None,
     }
 }
