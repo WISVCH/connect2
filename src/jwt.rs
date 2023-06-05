@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use crate::key_provider::{GoogleKeyProviderError, GooglePublicKeyProvider};
 use jsonwebtoken::{Algorithm, Validation};
 use serde::de::DeserializeOwned;
@@ -22,8 +24,9 @@ pub enum ParserError {
 /// Parse & Validate Google JWT token.
 /// Use public key from http(s) server.
 ///
+#[derive(Clone)]
 pub struct Parser {
-    key_provider: tokio::sync::Mutex<GooglePublicKeyProvider>,
+    key_provider: Arc<tokio::sync::Mutex<GooglePublicKeyProvider>>,
 }
 
 impl Parser {
@@ -35,7 +38,9 @@ impl Parser {
 
     pub fn new_with_custom_url(public_key_url: &str) -> Self {
         Self {
-            key_provider: tokio::sync::Mutex::new(GooglePublicKeyProvider::new(public_key_url)),
+            key_provider: Arc::new(tokio::sync::Mutex::new(GooglePublicKeyProvider::new(
+                public_key_url,
+            ))),
         }
     }
 

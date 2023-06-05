@@ -32,7 +32,7 @@ pub enum GoogleKeyProviderError {
     CreateKeyError(Error),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GooglePublicKeyProvider {
     url: String,
     keys: HashMap<String, GoogleKey>,

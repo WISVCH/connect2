@@ -1,11 +1,16 @@
 use crate::{jwt::Parser, models::TokenClaims};
 use axum::{
+    extract::State,
     http::{Request, StatusCode},
     middleware::Next,
     response::Response,
 };
 
-pub async fn iap_verify<B>(mut req: Request<B>, next: Next<B>) -> Result<Response, StatusCode> {
+pub async fn iap_verify<B>(
+    State(parser): State<Parser>,
+    mut req: Request<B>,
+    next: Next<B>,
+) -> Result<Response, StatusCode> {
     let iap_header = req
         .headers()
         .get("X-Goog-IAP-JWT-Assertion")
@@ -17,7 +22,7 @@ pub async fn iap_verify<B>(mut req: Request<B>, next: Next<B>) -> Result<Respons
         return Err(StatusCode::UNAUTHORIZED);
     };
 
-    if let Some(iap_context) = validate_iap_header(iap_header).await {
+    if let Some(iap_context) = validate_iap_header(parser, iap_header).await {
         // insert the iap context into a request extension so the handler can access it
         req.extensions_mut().insert(iap_context);
         Ok(next.run(req).await)
@@ -32,11 +37,10 @@ pub struct IapContext {
     pub verified: bool,
 }
 
-async fn validate_iap_header(header: &str) -> Option<IapContext> {
+async fn validate_iap_header(parser: Parser, header: &str) -> Option<IapContext> {
     // Extract the JWT token from the IAP header
     let jwt_token = header.trim().to_string();
 
-    let parser = Parser::new();
     match parser.parse::<TokenClaims>(&jwt_token).await {
         Ok(claims) => Some(IapContext {
             email: claims.email,
