@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use dotenv::dotenv;
 
 use crate::{
@@ -9,12 +7,12 @@ use crate::{
     },
     token::get_token,
 };
-use axum::{response, Extension, Json};
+use axum::{Extension, Json};
 
 pub async fn groups_handle(
     Extension(iap_context): Extension<IapContext>,
 ) -> Json<VerifiedResponseGroups> {
-    let groups = (get_groups(&iap_context.email).await.unwrap());
+    let groups = get_groups(&iap_context.email).await.unwrap();
     let verified_response = VerifiedResponseGroups {
         email: iap_context.email,
         groups,
