@@ -1,4 +1,4 @@
-use crate::{jwt::Parser, models::TokenClaims};
+use crate::{jwt::Parser, models::TokenClaims, AppState};
 use axum::{
     extract::State,
     http::{Request, StatusCode},
@@ -7,7 +7,7 @@ use axum::{
 };
 
 pub async fn iap_verify<B>(
-    State(parser): State<Parser>,
+    State(app_state): State<AppState>,
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<Response, StatusCode> {
@@ -22,7 +22,7 @@ pub async fn iap_verify<B>(
         return Err(StatusCode::UNAUTHORIZED);
     };
 
-    if let Some(iap_context) = validate_iap_header(parser, iap_header).await {
+    if let Some(iap_context) = validate_iap_header(app_state.parser, iap_header).await {
         // insert the iap context into a request extension so the handler can access it
         req.extensions_mut().insert(iap_context);
         Ok(next.run(req).await)
