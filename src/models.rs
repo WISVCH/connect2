@@ -2,11 +2,23 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Group {
     pub email: String,
     pub slug: String,
     pub name: String,
+}
+
+#[derive(Clone, Serialize)]
+pub struct VerifiedResponseGroups {
+    pub email: String,
+    pub groups: Vec<Group>,
+}
+
+#[derive(Clone, Serialize)]
+pub struct VerifiedResponseGroupsSlug {
+    pub email: String,
+    pub groups: Vec<String>,
 }
 
 #[derive(Deserialize)]
@@ -46,4 +58,12 @@ pub struct Claims {
     aud: String,
     // hd: String,
     // google: Google,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenClaims {
+    pub email: String,
+    pub aud: String,
+    pub iss: String,
+    pub exp: u64,
 }

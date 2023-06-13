@@ -1,27 +1,47 @@
 use dotenv::dotenv;
 
 use crate::{
-    models::{Group, SearchTransitiveGroupsResponse},
+    iap_verification::IapContext,
+    models::{
+        Group, SearchTransitiveGroupsResponse, VerifiedResponseGroups, VerifiedResponseGroupsSlug,
+    },
     token::get_token,
 };
-use axum::{extract::Path, Json};
+use axum::{Extension, Json};
 
-pub async fn groups_handler(Path(member_email): Path<String>) -> Json<Vec<Group>> {
-    Json(get_groups(member_email).await.unwrap())
+pub async fn groups_handler(
+    Extension(iap_context): Extension<IapContext>,
+) -> Json<VerifiedResponseGroups> {
+    let groups = get_groups(&iap_context.email).await.unwrap();
+    let verified_response = VerifiedResponseGroups {
+        email: iap_context.email,
+        groups,
+    };
+    Json(verified_response)
 }
-pub async fn groups_handler_as_array(Path(member_email): Path<String>) -> Json<Vec<String>> {
-    let groups = get_groups(member_email).await.unwrap();
+pub async fn groups_handler_as_array(
+    Extension(iap_context): Extension<IapContext>,
+) -> Json<VerifiedResponseGroupsSlug> {
+    let groups = get_groups(&iap_context.email).await.unwrap();
     let mut slugs = vec![];
     for group in groups {
         slugs.push(group.slug);
     }
-    Json(slugs)
+    let verified_response = VerifiedResponseGroupsSlug {
+        email: iap_context.email,
+        groups: slugs,
+    };
+    Json(verified_response)
+}
+
+pub async fn user_handler(Extension(iap_context): Extension<IapContext>) -> Json<String> {
+    Json(iap_context.email)
 }
 
 /* Retrieve the Groups from google workspace.
 * We use the `searchTransitiveGroups` method to retrieve all groups (https://cloud.google.com/identity/docs/reference/rest/v1/groups.memberships/searchTransitiveGroups)
 */
-pub async fn get_groups(member_email: String) -> Result<Vec<Group>, Box<dyn std::error::Error>> {
+pub async fn get_groups(member_email: &str) -> Result<Vec<Group>, Box<dyn std::error::Error>> {
     dotenv().ok();
     let access_token = get_token().await.unwrap().access_token;
 
