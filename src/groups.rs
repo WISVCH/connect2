@@ -9,7 +9,7 @@ use crate::{
 };
 use axum::{Extension, Json};
 
-pub async fn groups_handle(
+pub async fn groups_handler(
     Extension(iap_context): Extension<IapContext>,
 ) -> Json<VerifiedResponseGroups> {
     let groups = get_groups(&iap_context.email).await.unwrap();
@@ -34,7 +34,7 @@ pub async fn groups_handler_as_array(
     Json(verified_response)
 }
 
-pub async fn user_handle(Extension(iap_context): Extension<IapContext>) -> Json<String> {
+pub async fn user_handler(Extension(iap_context): Extension<IapContext>) -> Json<String> {
     Json(iap_context.email)
 }
 
