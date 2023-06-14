@@ -31,6 +31,12 @@ pub async fn groups_handler_as_array(
         email: iap_context.email,
         groups: slugs,
     };
+
+    println!(
+        "Authenticated user: {} with groups: {:?}",
+        verified_response.email, verified_response.groups
+    );
+
     Json(verified_response)
 }
 
@@ -61,12 +67,9 @@ pub async fn get_groups(member_email: &str) -> Result<Vec<Group>, Box<dyn std::e
         .send()
         .await;
 
-    println!("Response: {:?}", response);
-
     match response {
         Ok(res) => {
             let body = res.text().await.unwrap();
-            println!("Response Body: {}", body);
 
             match serde_json::from_str::<SearchTransitiveGroupsResponse>(&body) {
                 Ok(data) => Ok(map_groups_response_to_groups(data)),
