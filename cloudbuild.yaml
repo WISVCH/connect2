@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/connect2', '.']
+
+images:
+  # Push the Docker image to Google Container Registry (GCR) or any other container registry you prefer
+  - 'gcr.io/$PROJECT_ID/connect2'
