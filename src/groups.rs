@@ -61,7 +61,8 @@ pub async fn get_groups(member_email: &str) -> Result<Vec<Group>, Box<dyn std::e
     let response = client
     .get(&url)
     .query(&[
-        ("query", format!("member_key_id == '{}' && 'cloudidentity.googleapis.com/groups.discussion_forum' in labels", member_email))
+        ("query", format!("member_key_id == '{}' && 'cloudidentity.googleapis.com/groups.discussion_forum' in labels && parent == 'customers/{}'",
+        member_email, std::env::var("CUSTOMER_ID").unwrap()))
         ])
         .bearer_auth(access_token)
         .send()
